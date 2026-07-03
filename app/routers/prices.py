@@ -77,3 +77,22 @@ def get_top_movers(hours: int = 24, db: Session = Depends(get_db)):
     """)
     result = db.execute(sql, {"hours": hours}).mappings().all()
     return list(result)
+
+@router.get("/most-traded")
+def get_most_traded(limit: int = 20, db: Session = Depends(get_db)):
+    sql = text("""
+        SELECT i.name, i.buy_limit,
+               p.high, p.low,
+               p.high - p.low AS margin
+        FROM prices p
+        JOIN items i ON i.id = p.item_id
+        WHERE p.polled_at = (SELECT MAX(polled_at) FROM prices)
+          AND p.high IS NOT NULL
+          AND p.low IS NOT NULL
+        ORDER BY (
+            COALESCE(p.high, 0) + COALESCE(p.low, 0)
+        ) DESC
+        LIMIT :limit
+    """)
+    result = db.execute(sql, {"limit": limit}).mappings().all()
+    return list(result)
