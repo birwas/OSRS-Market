@@ -4,13 +4,13 @@ export default async function Home() {
     const margins = await getTopMargins(20);
 
     return (
-        <main className="min-h-screen bg-gray-950 text-white p-8">
+        <main className="p-8 max-w-[1400px] mx-auto">
             <h1 className="text-3xl font-bold text-yellow-400 mb-2">OSRS Market Tracker</h1>
             <p className="text-gray-400 mb-8">Highest flipping margins</p>
 
             <h2 className="text-xl font-semibold mb-4">Top Margins</h2>
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
+            <div className="overflow-x-auto max-w-full">
+                <table className="min-w-full text-sm border-collapse">
                     <thead>
                         <tr className="border-b border-gray-700 text-gray-400 text-left">
                             <th className="py-3 pr-6">Item</th>

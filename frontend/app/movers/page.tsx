@@ -4,7 +4,7 @@ export default async function MoversPage() {
     const movers = await getTopMovers(24);
 
     return (
-        <main className="min-h-screen p-8">
+        <main className="p-8 max-w-[1400px] mx-auto">
             <h1 className="text-3xl font-bold text-yellow-400 mb-2">Top Movers</h1>
             <p className="text-gray-400 mb-8">Biggest price changes in the last 24 hours</p>
 

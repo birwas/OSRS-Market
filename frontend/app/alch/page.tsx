@@ -42,7 +42,7 @@ export default function AlchPage() {
     }
 
     return (
-        <main className="min-h-screen p-8">
+        <main className="min-h-screen p-8 max-w-[1400px] mx-auto">
             <h1 className="text-3xl font-bold text-yellow-400 mb-2">Alch Profit</h1>
             <p className="text-gray-400 mb-8">Search for an item to calculate high alch profit</p>
 
