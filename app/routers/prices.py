@@ -58,26 +58,28 @@ def get_price_history(item_id: int, days: int = 7, db: Session = Depends(get_db)
 @router.get("/top-movers")
 def get_top_movers(hours: int = 24, db: Session = Depends(get_db)):
     sql = text("""
-        SELECT i.name,
-               first_price.high AS price_then,
-               last_price.high  AS price_now,
-               ROUND(100.0 * (last_price.high - first_price.high) / NULLIF(first_price.high, 0), 2) AS pct_change
-        FROM items i
-        JOIN prices first_price ON first_price.item_id = i.id
-        JOIN prices last_price  ON last_price.item_id  = i.id
-        WHERE first_price.polled_at = (
-            SELECT MIN(polled_at) FROM prices
-            WHERE polled_at >= NOW() - (:hours * INTERVAL '1 hour')
-        )
-        AND last_price.polled_at = (SELECT MAX(polled_at) FROM prices)
-        AND first_price.high IS NOT NULL
-        AND last_price.high IS NOT NULL
+        SELECT * FROM (
+            SELECT i.name,
+                   first_price.high AS price_then,
+                   last_price.high  AS price_now,
+                   ROUND(100.0 * (last_price.high - first_price.high) / NULLIF(first_price.high, 0), 2) AS pct_change
+            FROM items i
+            JOIN prices first_price ON first_price.item_id = i.id
+            JOIN prices last_price  ON last_price.item_id  = i.id
+            WHERE first_price.polled_at = (
+                SELECT MIN(polled_at) FROM prices
+                WHERE polled_at >= NOW() - (:hours * INTERVAL '1 hour')
+            )
+            AND last_price.polled_at = (SELECT MAX(polled_at) FROM prices)
+            AND first_price.high IS NOT NULL
+            AND last_price.high IS NOT NULL
+        ) subquery
         ORDER BY ABS(pct_change) DESC
         LIMIT 20
     """)
     result = db.execute(sql, {"hours": hours}).mappings().all()
     return list(result)
-
+    
 @router.get("/most-traded")
 def get_most_traded(limit: int = 20, db: Session = Depends(get_db)):
     sql = text("""
