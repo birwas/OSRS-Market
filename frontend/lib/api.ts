@@ -1,5 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-
+const API_BASE_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+console.log("API_BASE_URL:", API_BASE_URL);
 export async function getTopMargins(limit: number = 20) {
     const res = await fetch(`${API_BASE_URL}/prices/top-margins?limit=${limit}`);
     if (!res.ok) throw new Error("Failed to fetch top margins");
@@ -27,5 +27,17 @@ export async function searchItems(name: string) {
 export async function getAlchProfit(itemId: number) {
     const res = await fetch(`${API_BASE_URL}/items/${itemId}/alch-profit`);
     if (!res.ok) throw new Error("Failed to fetch alch profit");
+    return res.json();
+}
+
+export async function getItem(itemId: number) {
+    const res = await fetch(`${API_BASE_URL}/items/${itemId}`);
+    if (!res.ok) throw new Error("Failed to fetch item");
+    return res.json();
+}
+
+export async function getItemLatestPrice(itemId: number) {
+    const res = await fetch(`${API_BASE_URL}/prices/history/${itemId}?days=1`);
+    if (!res.ok) throw new Error("Failed to fetch item price");
     return res.json();
 }

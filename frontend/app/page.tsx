@@ -1,43 +1,63 @@
-import { getTopMargins } from "@/lib/api";
+"use client";
 
-export default async function Home() {
-    const margins = await getTopMargins(20);
+import { useState, useEffect } from "react";
+import { searchItems } from "@/lib/api";
+import { useRouter } from "next/navigation";
+
+export default function Home() {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState<any[]>([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (query.length < 2) {
+            setResults([]);
+            return;
+        }
+        const timeout = setTimeout(async () => {
+            try {
+                const items = await searchItems(query);
+                setResults(items.slice(0, 8));
+            } catch {
+                setResults([]);
+            }
+        }, 300);
+        return () => clearTimeout(timeout);
+    }, [query]);
+
+    function handleSelect(itemId: number) {
+        router.push(`/items/${itemId}`);
+    }
 
     return (
-        <main className="p-8 max-w-[1400px] mx-auto">
-            <h1 className="text-3xl font-bold text-yellow-400 mb-2">OSRS Market Tracker</h1>
-            <p className="text-gray-400 mb-8">Highest flipping margins</p>
+        <main className="flex flex-col items-center justify-center min-h-[80vh]">
+            <h1 className="text-4xl font-bold text-yellow-400 mb-2">⚔ OSRS Market</h1>
+            <p className="text-gray-400 mb-8 text-sm">Grand Exchange price tracker</p>
 
-            <h2 className="text-xl font-semibold mb-4">Top Margins</h2>
-            <div className="overflow-x-auto max-w-full">
-                <table className="min-w-full text-sm border-collapse">
-                    <thead>
-                        <tr className="border-b border-gray-700 text-gray-400 text-left">
-                            <th className="py-3 pr-6">Item</th>
-                            <th className="py-3 pr-6">Buy (Low)</th>
-                            <th className="py-3 pr-6">Sell (High)</th>
-                            <th className="py-3 pr-6">Margin</th>
-                            <th className="py-3 pr-6">Buy Limit</th>
-                            <th className="py-3">Max Profit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {margins.map((item: any, index: number) => (
-                            <tr
-                                key={index}
-                                className="border-b border-gray-800 hover:bg-gray-900 transition-colors"
+            <div className="relative w-full max-w-xl">
+                <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search for an item..."
+                    className="w-full bg-gray-900 border border-gray-700 rounded-full px-6 py-3 text-white focus:outline-none focus:border-yellow-400 text-sm"
+                    autoFocus
+                />
+                {results.length > 0 && (
+                    <div className="absolute z-10 w-full bg-gray-900 border border-gray-700 rounded-2xl mt-2 overflow-hidden">
+                        {results.map((item: any) => (
+                            <button
+                                key={item.id}
+                                onClick={() => handleSelect(item.id)}
+                                className="w-full text-left px-6 py-3 text-white hover:bg-gray-800 transition-colors text-sm border-b border-gray-800 last:border-0"
                             >
-                                <td className="py-3 pr-6 font-medium text-yellow-300">{item.name}</td>
-                                <td className="py-3 pr-6">{item.low?.toLocaleString()}gp</td>
-                                <td className="py-3 pr-6">{item.high?.toLocaleString()}gp</td>
-                                <td className="py-3 pr-6 text-green-400">{item.margin?.toLocaleString()}gp</td>
-                                <td className="py-3 pr-6 text-gray-300">{item.buy_limit?.toLocaleString()}</td>
-                                <td className="py-3 text-green-300 font-semibold">{item.max_profit?.toLocaleString()}gp</td>
-                            </tr>
+                                {item.name}
+                            </button>
                         ))}
-                    </tbody>
-                </table>
+                    </div>
+                )}
             </div>
+            
         </main>
     );
 }
