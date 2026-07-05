@@ -59,7 +59,7 @@ def get_price_history(item_id: int, days: int = 7, db: Session = Depends(get_db)
 def get_top_movers(hours: int = 24, db: Session = Depends(get_db)):
     sql = text("""
         SELECT * FROM (
-            SELECT i.name,
+            SELECT i.id, i.name,
                    first_price.high AS price_then,
                    last_price.high  AS price_now,
                    ROUND(100.0 * (last_price.high - first_price.high) / NULLIF(first_price.high, 0), 2) AS pct_change

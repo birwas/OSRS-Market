@@ -1,4 +1,5 @@
 import { getTopMovers } from "@/lib/api";
+import Link from "next/link";
 
 export default async function MoversPage() {
     const movers = await getTopMovers(24);
@@ -26,7 +27,9 @@ export default async function MoversPage() {
                                     key={index}
                                     className="border-b border-gray-800 hover:bg-gray-900 transition-colors"
                                 >
-                                    <td className="py-3 pr-6 font-medium text-yellow-300">{item.name}</td>
+                                    <td className="py-3 pr-6 font-medium text-yellow-300 hover:text-yellow-400">
+                                        <Link href={`/items/${item.id}`}>{item.name}</Link>
+                                    </td>
                                     <td className="py-3 pr-6 text-white">{item.price_then?.toLocaleString()}gp</td>
                                     <td className="py-3 pr-6 text-white">{item.price_now?.toLocaleString()}gp</td>
                                     <td className={`py-3 font-semibold ${isPositive ? "text-green-300" : "text-red-400"}`}>
