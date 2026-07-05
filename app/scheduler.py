@@ -48,15 +48,15 @@ def poll_prices():
     try:
         logger.info("Polling latest prices...")
         latest = wiki.get_latest()
+        volumes = wiki.get_volumes()
         polled_at = datetime.datetime.now(datetime.timezone.utc)
 
-        # get all valid item IDs from the database
         valid_ids = set(row[0] for row in db.query(Item.id).all())
 
         prices = []
         for item_id, price_data in latest.items():
             if int(item_id) not in valid_ids:
-                continue  # skip items not in our items table
+                continue
             high_time = price_data.get("highTime")
             low_time = price_data.get("lowTime")
             prices.append(Price(
@@ -66,6 +66,7 @@ def poll_prices():
                 high_time=datetime.datetime.fromtimestamp(high_time, tz=datetime.timezone.utc) if high_time else None,
                 low=price_data.get("low"),
                 low_time=datetime.datetime.fromtimestamp(low_time, tz=datetime.timezone.utc) if low_time else None,
+                volume=volumes.get(item_id),
             ))
         db.bulk_save_objects(prices)
         db.commit()
@@ -79,7 +80,7 @@ def poll_prices():
 
 def start_scheduler():
     seed_items()
-    poll_prices()  # run immediately on startup
+    poll_prices()
     scheduler = BackgroundScheduler()
     scheduler.add_job(poll_prices, IntervalTrigger(minutes=5))
     scheduler.start()

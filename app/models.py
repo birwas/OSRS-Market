@@ -30,5 +30,6 @@ class Price(Base):
     high_time = Column(TIMESTAMP(timezone=True))
     low = Column(Integer)
     low_time = Column(TIMESTAMP(timezone=True))
+    volume = Column(Integer)
 
     item = relationship("Item", back_populates="prices")

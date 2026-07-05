@@ -26,7 +26,8 @@ def get_top_margins(limit: int = 20, db: Session = Depends(get_db)):
         SELECT i.id, i.name, i.buy_limit,
                p.high, p.low,
                p.high - p.low AS margin,
-               (p.high - p.low)::bigint * i.buy_limit AS max_profit
+               (p.high - p.low)::bigint * i.buy_limit AS max_profit,
+               p.volume
         FROM prices p
         JOIN items i ON i.id = p.item_id
         WHERE p.polled_at = (SELECT MAX(polled_at) FROM prices)

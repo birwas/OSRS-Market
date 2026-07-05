@@ -1,15 +1,14 @@
 import { getTopMargins } from "@/lib/api";
 import Link from "next/link";
 
-export default async function Home() {
+export default async function MarginsPage() {
     const margins = await getTopMargins(20);
 
     return (
         <main className="p-8 max-w-[1400px] mx-auto">
-            <h1 className="text-3xl font-bold text-yellow-400 mb-2">OSRS Market Tracker</h1>
-            <p className="text-gray-400 mb-8">Highest flipping margins</p>
+            <h1 className="text-3xl font-bold text-yellow-400 mb-2">Top Margins</h1>
+            <p className="text-gray-400 mb-8">Highest flipping margins on the Grand Exchange</p>
 
-            <h2 className="text-xl font-semibold mb-4">Top Margins</h2>
             <div className="overflow-x-auto max-w-full">
                 <table className="min-w-full text-sm border-collapse">
                     <thead>
@@ -19,7 +18,8 @@ export default async function Home() {
                             <th className="py-3 pr-6">Sell (High)</th>
                             <th className="py-3 pr-6">Margin</th>
                             <th className="py-3 pr-6">Buy Limit</th>
-                            <th className="py-3">Max Profit</th>
+                            <th className="py-3 pr-6">Max Profit</th>
+                            <th className="py-3">Volume</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,8 +35,11 @@ export default async function Home() {
                                 <td className="py-3 pr-6 text-white">{item.high?.toLocaleString()}gp</td>
                                 <td className="py-3 pr-6 text-green-400">{item.margin?.toLocaleString()}gp</td>
                                 <td className="py-3 pr-6 text-gray-300">{item.buy_limit?.toLocaleString() ?? "—"}</td>
-                                <td className="py-3 text-green-300 font-semibold">
+                                <td className="py-3 pr-6 text-green-300 font-semibold">
                                     {item.max_profit ? item.max_profit.toLocaleString() + "gp" : "—"}
+                                </td>
+                                <td className="py-3 text-gray-300">
+                                    {item.volume?.toLocaleString() ?? "—"}
                                 </td>
                             </tr>
                         ))}
