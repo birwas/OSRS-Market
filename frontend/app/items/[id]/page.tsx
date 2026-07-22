@@ -1,5 +1,6 @@
 import { getItem, getItemLatestPrice, getAlchProfit } from "@/lib/api";
 import Link from "next/link";
+import PriceChart from "@/components/PriceChart";
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -30,8 +31,9 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
             <h1 className="text-3xl font-bold text-yellow-400 mb-1">{item.name}</h1>
             <p className="text-gray-400 text-sm mb-8">{item.examine}</p>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            {prices.length > 0 && <PriceChart data={prices} />}
 
+            <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-gray-900 border border-gray-800 rounded p-4">
                     <p className="text-gray-400 text-xs mb-1">Instant buy (high)</p>
                     <p className="text-white font-semibold text-lg">
@@ -96,7 +98,6 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                         </p>
                     </div>
                 )}
-
             </div>
         </main>
     );
