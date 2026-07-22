@@ -88,3 +88,7 @@ The frontend will be available at `http://localhost:3000`.
 ## Data Source
 
 Price data sourced from the OSRS Wiki Prices API (https://prices.runescape.wiki/api/v1/osrs), which provides real-time Grand Exchange data. Item metadata sourced from the `/mapping` endpoint.
+
+## Live Demo
+- Frontend: https://osrs-market-birwa.vercel.app
+- API: https://osrs-market-production.up.railway.app/docs
