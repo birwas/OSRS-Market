@@ -47,8 +47,8 @@ export default function PriceChart({ data }: Props) {
                     <Tooltip
                         contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
                         labelStyle={{ color: "#9ca3af", fontSize: 11 }}
-                        labelFormatter={(value) => new Date(value).toLocaleString("en-GB")}
-                        formatter={(value: number, name: string) => [formatGp(value), name === "high" ? "Instant buy" : "Instant sell"]}
+                        labelFormatter={(value) => new Date(value as string).toLocaleString("en-GB")}
+                        formatter={(value, name) => [formatGp(value as number), name === "high" ? "Instant buy" : "Instant sell"]}
                     />
                     <Legend
                         formatter={(value) => value === "high" ? "Instant buy" : "Instant sell"}
