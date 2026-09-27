@@ -41,3 +41,9 @@ export async function getItemLatestPrice(itemId: number) {
     if (!res.ok) throw new Error("Failed to fetch item price");
     return res.json();
 }
+
+export async function getPricePrediction(itemId: number) {
+    const res = await fetch(`${API_BASE_URL}/prices/prediction/${itemId}`);
+    if (!res.ok) throw new Error("Failed to fetch price prediction");
+    return res.json();
+}

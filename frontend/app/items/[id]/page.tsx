@@ -1,4 +1,4 @@
-import { getItem, getItemLatestPrice, getAlchProfit } from "@/lib/api";
+import { getItem, getItemLatestPrice, getAlchProfit, getPricePrediction } from "@/lib/api";
 import Link from "next/link";
 import PriceChart from "@/components/PriceChart";
 
@@ -6,15 +6,17 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
     const { id } = await params;
     const itemId = parseInt(id);
 
-    const [item, prices, alch] = await Promise.all([
+    const [item, prices, alch, prediction] = await Promise.all([
         getItem(itemId),
         getItemLatestPrice(itemId).catch(() => []),
         getAlchProfit(itemId).catch(() => null),
+        getPricePrediction(itemId).catch(() => null),
     ]);
 
     const latest = prices[0] ?? null;
     const margin = latest ? latest.high - latest.low : null;
     const roi = margin && latest?.low ? ((margin / latest.low) * 100).toFixed(2) : null;
+    const predictedChange = prediction && latest?.high ? prediction.predicted_high - latest.high : null;
 
     return (
         <main className="p-8 max-w-3xl mx-auto">
@@ -45,6 +47,18 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                     <p className="text-gray-400 text-xs mb-1">Instant sell (low)</p>
                     <p className="text-white font-semibold text-lg">
                         {latest?.low ? latest.low.toLocaleString() + " gp" : "—"}
+                    </p>
+                </div>
+
+                <div className="bg-gray-900 border border-gray-800 rounded p-4 col-span-2">
+                    <p className="text-gray-400 text-xs mb-1">Predicted next high (LSTM)</p>
+                    <p className="text-white font-semibold text-lg">
+                        {prediction ? prediction.predicted_high.toLocaleString() + " gp" : "—"}
+                        {predictedChange !== null && (
+                            <span className={`ml-2 text-sm ${predictedChange >= 0 ? "text-green-300" : "text-red-400"}`}>
+                                {predictedChange >= 0 ? "+" : ""}{predictedChange.toLocaleString()} gp
+                            </span>
+                        )}
                     </p>
                 </div>
 

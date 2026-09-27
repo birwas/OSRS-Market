@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import get_db
 from models import Price
+from prediction import predict_next, InsufficientDataError
 
 router = APIRouter()
 
@@ -99,3 +100,11 @@ def get_most_traded(limit: int = 20, db: Session = Depends(get_db)):
     """)
     result = db.execute(sql, {"limit": limit}).mappings().all()
     return list(result)
+
+
+@router.get("/prediction/{item_id}")
+def get_price_prediction(item_id: int, db: Session = Depends(get_db)):
+    try:
+        return predict_next(db, item_id)
+    except InsufficientDataError as e:
+        raise HTTPException(status_code=404, detail=str(e))

@@ -6,3 +6,5 @@ apscheduler
 python-dotenv
 requests
 mcp
+numpy
+torch
